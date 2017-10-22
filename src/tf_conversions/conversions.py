@@ -1,8 +1,70 @@
-from geometry_msgs.msg import Pose
+import rospy, tf
+from geometry_msgs.msg import Pose, PoseStamped, TransformStamped
+import transformations as transf
+
+
+# Converts a geometry_msgs/Pose into a 4x4 numpy matrix
+def pose_msg_to_matrix(pose):
+    assert isinstance(pose, Pose), 'Input is not of type geometry_msgs/Pose'
+	matrix = transf.quaternion_matrix([pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w])
+    matrix[0:3,3] = [pose.position.x, pose.position.y, pose.position.z]
+    return matrix
+
+
+# Converts a geometry_msgs/PoseStamped into a 4x4 numpy matrix
+def pose_stamped_msg_to_matrix(pose_stamped):
+    assert isinstance(pose, PoseStamped), 'Input is not of type geometry_msgs/PoseStamped'
+    return pose_msg_to_matrix(pose_stamped.pose)
+
+
+# Converts a geometry_msgs/TransformStamped into a 4x4 numpy matrix
+def transform_stamped_msg_to_matrix(transform_stamped_msg):
+    assert isinstance(pose, TransformStamped), 'Input is not of type geometry_msgs/TransformStamped'
+	position = transform_stamped_msg.transform.translation
+	quaternion = transform_stamped_msg.transform.rotation
+
+	return np.dot(transf.translation_matrix([position.x, position.y, position.z]), \
+				transf.quaternion_matrix([quaternion.x, quaternion.y, quaternion.z, quaternion.w]))
+
 
 # Converts a geometry_msgs/Pose into a list [x,y,z,q1,q2,q3,q4]
 def pose_msg_to_pose_vector(pose):
     assert isinstance(pose, Pose), 'Input is not of type geometry_msgs/Pose'
     return [pose.position.x, pose.position.y, pose.position.z, \
-            pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w
-           ]
+            pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w]
+
+
+# Converts a pose_vector (list of length 7: x,y,z,q1,q2,q3,q4) into a geometry_msgs/Pose
+def pose_vector_to_pose_msg(pose_vector):
+    assert len(pose_vector) == 7, 'Invalid pose_vector. Should be length 7 (x,y,z,q1,q2,q3,q4).'
+    pose_msg = Pose()
+    pose_msg.position.x = pose_vector[0]
+    pose_msg.position.y = pose_vector[1]
+    pose_msg.position.z = pose_vector[2]
+    pose_msg.orientation.x = pose_vector[3]
+    pose_msg.orientation.y = pose_vector[4]
+    pose_msg.orientation.z = pose_vector[5]
+    pose_msg.orientation.w = pose_vector[6]
+
+
+# Converts a 4x4 numpy matrix into a geometry_msgs/Pose
+def matrix_to_pose_msg(matrix):
+    position_vector = transf.translation_from_matrix(matrix)
+    quaternion_vector = transf.quaternion_from_matrix(matrix)
+    return pose_vector_to_pose_msg(position_vector+quaternion_vector)
+
+
+# Converts a 4x4 numpy matrix and associated frame_id into a geometry_msgs/PoseStamped
+def matrix_to_pose_stamped_msg(matrix, frame_id):
+    pose_stamped_msg = PoseStamped()
+    pose_stamped_msg.header.frame_id = frame_id
+    pose_stamped_msg.header.stamp = rospy.Time.now()
+    pose_stamped_msg.pose = matrix_to_pose_msg(matrix)
+    return pose_stamped_msg
+
+
+# Broadcasts a ROS TF describing the transformation matrix from source_frame to target_frame
+def broadcast_matrix_as_tf(matrix, source_frame, target_frame):
+    position = tuple(transf.translation_from_matrix(matrix))
+    quaternion = tuple(transf.quaternion_from_matrix(matrix))
+    tf.TransformBroadcaster().sendTransform(position, quaternion, rospy.Time.now(), target_frame, source_frame)
