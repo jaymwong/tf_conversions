@@ -17,6 +17,31 @@ def pose_stamped_msg_to_matrix(pose_stamped):
     return pose_msg_to_matrix(pose_stamped.pose)
 
 
+# Converts a geometry_msgs/TransformStamped into a geometry_msgs/Pose
+def transform_stamped_msg_to_pose_msg(transform_stamped_msg):
+    assert isinstance(pose, TransformStamped), 'Input is not of type geometry_msgs/TransformStamped'
+	position = transform_stamped_msg.transform.translation
+	quaternion = transform_stamped_msg.transform.rotation
+    pose_msg = Pose()
+    pose_msg.position.x = position.x
+    pose_msg.position.y = position.y
+    pose_msg.position.z = position.z
+    pose_msg.orientation.x = quaternion.x
+    pose_msg.orientation.y = quaternion.y
+    pose_msg.orientation.z = quaternion.z
+    pose_msg.orientation.w = quaternion.w
+    return pose_msg
+
+
+# Converts a geometry_msgs/TransformStamped into a geometry_msgs/PoseStamped
+def transform_stamped_msg_to_pose_stamped_msg(transform_stamped_msg):
+    assert isinstance(pose, TransformStamped), 'Input is not of type geometry_msgs/TransformStamped'
+    pose_stamped_msg = PoseStamped()
+    pose_stamped_msg.header = transform_stamped_msg.header
+    pose_stamped_msg.pose = transform_stamped_msg_to_pose_msg(transform_stamped_msg)
+    return pose_stamped_msg
+
+
 # Converts a geometry_msgs/TransformStamped into a 4x4 numpy matrix
 def transform_stamped_msg_to_matrix(transform_stamped_msg):
     assert isinstance(pose, TransformStamped), 'Input is not of type geometry_msgs/TransformStamped'
