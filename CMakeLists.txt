@@ -8,7 +8,6 @@ find_package(catkin REQUIRED
 		geometry_msgs
 )
 
-
 catkin_python_setup()
 
 catkin_package(
@@ -25,9 +24,11 @@ include_directories(
 add_library(transform_conversions
 	src/conversions.cpp
 )
+
 add_dependencies(transform_conversions
   ${catkin_EXPORTED_TARGETS}
 )
+
 target_link_libraries(transform_conversions
   ${catkin_LIBRARIES}
 )
