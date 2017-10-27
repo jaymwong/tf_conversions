@@ -6,7 +6,7 @@ import transformations as transf
 # Converts a geometry_msgs/Pose into a 4x4 numpy matrix
 def pose_msg_to_matrix(pose):
     assert isinstance(pose, Pose), 'Input is not of type geometry_msgs/Pose'
-	matrix = transf.quaternion_matrix([pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w])
+    matrix = transf.quaternion_matrix([pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w])
     matrix[0:3,3] = [pose.position.x, pose.position.y, pose.position.z]
     return matrix
 
@@ -20,8 +20,8 @@ def pose_stamped_msg_to_matrix(pose_stamped):
 # Converts a geometry_msgs/TransformStamped into a geometry_msgs/Pose
 def transform_stamped_msg_to_pose_msg(transform_stamped_msg):
     assert isinstance(pose, TransformStamped), 'Input is not of type geometry_msgs/TransformStamped'
-	position = transform_stamped_msg.transform.translation
-	quaternion = transform_stamped_msg.transform.rotation
+    position = transform_stamped_msg.transform.translation
+    quaternion = transform_stamped_msg.transform.rotation
     pose_msg = Pose()
     pose_msg.position.x = position.x
     pose_msg.position.y = position.y
@@ -45,10 +45,10 @@ def transform_stamped_msg_to_pose_stamped_msg(transform_stamped_msg):
 # Converts a geometry_msgs/TransformStamped into a 4x4 numpy matrix
 def transform_stamped_msg_to_matrix(transform_stamped_msg):
     assert isinstance(pose, TransformStamped), 'Input is not of type geometry_msgs/TransformStamped'
-	position = transform_stamped_msg.transform.translation
-	quaternion = transform_stamped_msg.transform.rotation
+    position = transform_stamped_msg.transform.translation
+    quaternion = transform_stamped_msg.transform.rotation
 
-	return np.dot(transf.translation_matrix([position.x, position.y, position.z]), \
+    return np.dot(transf.translation_matrix([position.x, position.y, position.z]), \
 				transf.quaternion_matrix([quaternion.x, quaternion.y, quaternion.z, quaternion.w]))
 
 
@@ -70,12 +70,13 @@ def pose_vector_to_pose_msg(pose_vector):
     pose_msg.orientation.y = pose_vector[4]
     pose_msg.orientation.z = pose_vector[5]
     pose_msg.orientation.w = pose_vector[6]
+    return pose_msg
 
 
 # Converts a 4x4 numpy matrix into a geometry_msgs/Pose
 def matrix_to_pose_msg(matrix):
-    position_vector = transf.translation_from_matrix(matrix)
-    quaternion_vector = transf.quaternion_from_matrix(matrix)
+    position_vector = list(transf.translation_from_matrix(matrix))
+    quaternion_vector = list(transf.quaternion_from_matrix(matrix))
     return pose_vector_to_pose_msg(position_vector+quaternion_vector)
 
 

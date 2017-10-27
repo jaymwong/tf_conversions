@@ -8,16 +8,21 @@ find_package(catkin REQUIRED
 		geometry_msgs
 )
 
+find_package(cmake_modules REQUIRED)
+find_package(Eigen REQUIRED)
+
 catkin_python_setup()
 
 catkin_package(
 	INCLUDE_DIRS include
+	LIBRARIES transform_conversions
 	CATKIN_DEPENDS roscpp
 	DEPENDS EIGEN3
 )
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIRS}
 	include
 )
 
