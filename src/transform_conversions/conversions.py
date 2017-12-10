@@ -1,6 +1,8 @@
+#!/usr/bin/env python
+
 import rospy, tf
 from geometry_msgs.msg import Pose, PoseStamped, TransformStamped
-import transformations as transf
+import transform_conversions.transformations as transf
 
 
 # Converts a geometry_msgs/Pose into a 4x4 numpy matrix
@@ -93,4 +95,5 @@ def matrix_to_pose_stamped_msg(matrix, frame_id):
 def broadcast_matrix_as_tf(matrix, source_frame, target_frame):
     position = tuple(transf.translation_from_matrix(matrix))
     quaternion = tuple(transf.quaternion_from_matrix(matrix))
+    quaternion = (quaternion[1], quaternion[2], quaternion[3], quaternion[0]) # (x, y, z, w)
     tf.TransformBroadcaster().sendTransform(position, quaternion, rospy.Time.now(), target_frame, source_frame)
