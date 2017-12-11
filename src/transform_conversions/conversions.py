@@ -79,6 +79,7 @@ def pose_vector_to_pose_msg(pose_vector):
 def matrix_to_pose_msg(matrix):
     position_vector = list(transf.translation_from_matrix(matrix))
     quaternion_vector = list(transf.quaternion_from_matrix(matrix))
+    quaternion_vector = [quaternion_vector[1], quaternion_vector[2], quaternion_vector[3], quaternion_vector[0]]
     return pose_vector_to_pose_msg(position_vector+quaternion_vector)
 
 
