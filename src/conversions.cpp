@@ -37,11 +37,11 @@ geometry_msgs::PoseStamped transform_conversions::transform_point(tf2_ros::Buffe
 
 Eigen::Matrix4d transform_conversions::array_to_eigen4d_matrix(const double transform[]){
   Eigen::MatrixXd obj_pose;
-  obj_pose.resize(16, 1);
-  for (int i = 0; i < 16; i++){
+  obj_pose.resize(HOMOGENOUS_TRANFORM_ELEMENTS, 1);
+  for (int i = 0; i < HOMOGENOUS_TRANFORM_ELEMENTS; i++){
     obj_pose(i, 0) = transform[i];
   }
-  obj_pose.resize(4,4);
+  obj_pose.resize(4, 4);
 
   // Assert the bottom row is 0 0 0 1; otherwise transpose the 4x4 matrix
   if (obj_pose(3,0) != 0.0 || obj_pose(3,1) != 0.0 || obj_pose(3,2) != 0.0){
@@ -50,4 +50,15 @@ Eigen::Matrix4d transform_conversions::array_to_eigen4d_matrix(const double tran
     obj_pose = obj_pose_transpose;
   }
   return obj_pose;
+}
+
+boost::array<double, HOMOGENOUS_TRANFORM_ELEMENTS> transform_conversions::eigen4d_matrix_to_array(Eigen::Matrix4d transform){
+  boost::array<double, HOMOGENOUS_TRANFORM_ELEMENTS> transform_array;
+  Eigen::MatrixXd resize_transform = transform;
+  resize_transform.resize(1, HOMOGENOUS_TRANFORM_ELEMENTS);
+
+  for (int i = 0; i < HOMOGENOUS_TRANFORM_ELEMENTS; i++){
+    transform_array[i] = resize_transform(0, i);
+  }
+  return transform_array;
 }

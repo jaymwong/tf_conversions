@@ -14,6 +14,8 @@
 #include <Eigen/Core>
 
 
+#define HOMOGENOUS_TRANFORM_ELEMENTS 16
+
 namespace transform_conversions{
 
   // Various conversions
@@ -25,6 +27,7 @@ namespace transform_conversions{
   geometry_msgs::PoseStamped transform_point(tf2_ros::Buffer &tf_buffer, geometry_msgs::PoseStamped pose, std::string source_frame, std::string target_frame);
 
   Eigen::Matrix4d array_to_eigen4d_matrix(const double transform[]);
+  boost::array<double, HOMOGENOUS_TRANFORM_ELEMENTS> eigen4d_matrix_to_array(Eigen::Matrix4d transform);
 };
 
 #endif
