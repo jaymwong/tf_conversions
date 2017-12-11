@@ -34,3 +34,20 @@ geometry_msgs::PoseStamped transform_conversions::transform_point(tf2_ros::Buffe
   pose_in_target_frame.pose.position = point_in_target_frame.point;
   return pose_in_target_frame;
 }
+
+Eigen::Matrix4d transform_conversions::array_to_eigen4d_matrix(const double transform[]){
+  Eigen::MatrixXd obj_pose;
+  obj_pose.resize(16, 1);
+  for (int i = 0; i < 16; i++){
+    obj_pose(i, 0) = transform[i];
+  }
+  obj_pose.resize(4,4);
+
+  // Assert the bottom row is 0 0 0 1; otherwise transpose the 4x4 matrix
+  if (obj_pose(3,0) != 0.0 || obj_pose(3,1) != 0.0 || obj_pose(3,2) != 0.0){
+    //std::cout << "Transposing the 4x4 matrix!\n";
+    Eigen::MatrixXd obj_pose_transpose = obj_pose.transpose();
+    obj_pose = obj_pose_transpose;
+  }
+  return obj_pose;
+}

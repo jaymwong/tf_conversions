@@ -11,6 +11,8 @@
 #include <tf2_ros/transform_listener.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
+#include <Eigen/Core>
+
 
 namespace transform_conversions{
 
@@ -22,6 +24,7 @@ namespace transform_conversions{
   geometry_msgs::PointStamped transform_point(tf2_ros::Buffer &tf_buffer, geometry_msgs::PointStamped point, std::string target_frame);
   geometry_msgs::PoseStamped transform_point(tf2_ros::Buffer &tf_buffer, geometry_msgs::PoseStamped pose, std::string source_frame, std::string target_frame);
 
+  Eigen::Matrix4d array_to_eigen4d_matrix(const double transform[]);
 };
 
 #endif
