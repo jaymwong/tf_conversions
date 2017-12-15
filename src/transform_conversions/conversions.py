@@ -1,9 +1,16 @@
 #!/usr/bin/env python
 
-import rospy, tf
+import rospy, tf, numpy as np
 from geometry_msgs.msg import Pose, PoseStamped, TransformStamped
 import transform_conversions.transformations as transf
 
+
+# Converts a 16x1 list to a 4x4 numpy matrix
+def homogeneous_vector_to_matrix(vector):
+    matrix = np.resize(vector, (4,4))
+    if matrix[3,0] != 0.0 or matrix[3,1] != 0.0 or matrix[3,2] != 0.0:
+        matrix = np.transpose(matrix)
+    return matrix
 
 # Converts a geometry_msgs/Pose into a 4x4 numpy matrix
 def pose_msg_to_matrix(pose):
@@ -82,6 +89,10 @@ def matrix_to_pose_msg(matrix):
     quaternion_vector = [quaternion_vector[1], quaternion_vector[2], quaternion_vector[3], quaternion_vector[0]]
     return pose_vector_to_pose_msg(position_vector+quaternion_vector)
 
+
+# Converts a 4x4 numpy matrix into a list [x,y,z,q1,q2,q3,q4]
+def matrix_to_pose_vector(matrix):
+    return pose_msg_to_pose_vector(matrix_to_pose_msg(matrix))
 
 # Converts a 4x4 numpy matrix and associated frame_id into a geometry_msgs/PoseStamped
 def matrix_to_pose_stamped_msg(matrix, frame_id):
