@@ -35,6 +35,23 @@ geometry_msgs::PoseStamped transform_conversions::transform_point(tf2_ros::Buffe
   return pose_in_target_frame;
 }
 
+Eigen::Matrix4d transform_conversions::translation_matrix(double x, double y, double z){
+  Eigen::Matrix4d matrix = Eigen::Matrix4d::Identity();
+  matrix.col(3) << x, y, z, 1.0;
+  return matrix;
+}
+
+
+Eigen::Matrix4d transform_conversions::euler_matrix(double roll, double pitch, double yaw){
+  Eigen::Matrix4d matrix = Eigen::Matrix4d::Identity();
+  Eigen::AngleAxisd rollAngle(roll, Eigen::Vector3d::UnitZ());
+  Eigen::AngleAxisd yawAngle(yaw, Eigen::Vector3d::UnitY());
+  Eigen::AngleAxisd pitchAngle(pitch, Eigen::Vector3d::UnitX());
+  Eigen::Quaternion<double> q = rollAngle * yawAngle * pitchAngle;
+  matrix.block<3,3>(0,0) = q.matrix();
+  return matrix;
+}
+
 void transform_conversions::publish_matrix_as_tf(tf::TransformBroadcaster &br, Eigen::Matrix4d transformation_matrix, std::string source, std::string dest){
   Eigen::Affine3d *eigen_transform = new Eigen::Affine3d();
   eigen_transform->matrix() = transformation_matrix;
