@@ -35,6 +35,15 @@ geometry_msgs::PoseStamped transform_conversions::transform_point(tf2_ros::Buffe
   return pose_in_target_frame;
 }
 
+void transform_conversions::publish_matrix_as_tf(tf::TransformBroadcaster &br, Eigen::Matrix4d transformation_matrix, std::string source, std::string dest){
+  Eigen::Affine3d *eigen_transform = new Eigen::Affine3d();
+  eigen_transform->matrix() = transformation_matrix;
+  tf::Transform t;
+  tf::transformEigenToTF(*eigen_transform, t);
+  br.sendTransform(tf::StampedTransform(t, ros::Time::now(), source, dest));
+}
+
+
 Eigen::Matrix4d transform_conversions::array_to_eigen4d_matrix(const double transform[]){
   Eigen::MatrixXd obj_pose;
   obj_pose.resize(HOMOGENOUS_TRANFORM_ELEMENTS, 1);
