@@ -57,6 +57,8 @@ void transform_conversions::publish_matrix_as_tf(tf::TransformBroadcaster &br, E
   eigen_transform->matrix() = transformation_matrix;
   tf::Transform t;
   tf::transformEigenToTF(*eigen_transform, t);
+  auto q = t.getRotation().normalize();
+  t.setRotation(q);
   br.sendTransform(tf::StampedTransform(t, ros::Time::now(), source, dest));
 }
 
