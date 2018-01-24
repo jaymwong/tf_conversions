@@ -7,6 +7,7 @@ find_package(catkin REQUIRED
 	COMPONENTS
 		geometry_msgs
   	tf_conversions
+		message_generation
 )
 
 find_package(cmake_modules REQUIRED)
@@ -14,10 +15,20 @@ find_package(Eigen3 REQUIRED)
 
 catkin_python_setup()
 
+add_message_files(DIRECTORY msg
+  FILES
+  HomogeneousTransform.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+
 catkin_package(
 	INCLUDE_DIRS include
 	LIBRARIES transform_conversions
-	CATKIN_DEPENDS roscpp
+	CATKIN_DEPENDS roscpp message_generation
 	DEPENDS EIGEN3
 )
 
