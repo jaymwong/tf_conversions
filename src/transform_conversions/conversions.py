@@ -20,6 +20,12 @@ def pose_msg_to_matrix(pose):
     return matrix
 
 
+def xyzrpy_to_matrix(data):
+    assert len(data) == 6
+    matrix = transf.euler_matrix(data[3], data[4], data[5])
+    matrix[0:3,3] = [data[0], data[1], data[2]]
+    return matrix
+
 # Converts a geometry_msgs/PoseStamped into a 4x4 numpy matrix
 def pose_stamped_msg_to_matrix(pose_stamped):
     assert isinstance(pose, PoseStamped), 'Input is not of type geometry_msgs/PoseStamped'
@@ -53,7 +59,7 @@ def transform_stamped_msg_to_pose_stamped_msg(transform_stamped_msg):
 
 # Converts a geometry_msgs/TransformStamped into a 4x4 numpy matrix
 def transform_stamped_msg_to_matrix(transform_stamped_msg):
-    assert isinstance(pose, TransformStamped), 'Input is not of type geometry_msgs/TransformStamped'
+    assert isinstance(transform_stamped_msg, TransformStamped), 'Input is not of type geometry_msgs/TransformStamped'
     position = transform_stamped_msg.transform.translation
     quaternion = transform_stamped_msg.transform.rotation
 
@@ -81,6 +87,10 @@ def pose_vector_to_pose_msg(pose_vector):
     pose_msg.orientation.w = pose_vector[6]
     return pose_msg
 
+
+def pose_vector_to_matrix(pose_vector):
+    assert len(pose_vector) == 7, 'Invalid pose_vector. Should be length 7 (x,y,z,q1,q2,q3,q4).'
+    return pose_msg_to_matrix(pose_vector_to_pose_msg(pose_vector))
 
 # Converts a 4x4 numpy matrix into a geometry_msgs/Pose
 def matrix_to_pose_msg(matrix):
