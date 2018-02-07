@@ -35,7 +35,9 @@ namespace transform_conversions{
   Eigen::Matrix4d euler_matrix(double roll, double pitch, double yaw);
 
   Eigen::Matrix4d array_to_eigen4d_matrix(const double transform[]);
+  Eigen::Matrix4d array_to_eigen4d_matrix(const float transform[]);
   boost::array<double, HOMOGENOUS_TRANFORM_ELEMENTS> eigen4d_matrix_to_array(Eigen::Matrix4d transform);
+
 };
 
 #endif
